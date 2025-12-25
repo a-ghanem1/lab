@@ -1,0 +1,39 @@
+---
+- name: Install and configure Nginx with IP restriction
+  hosts: my_hosts
+  become: true
+  gather_facts: true
+
+  vars:
+    allowed_ips:
+      - 192.168.1.50
+      - 192.168.1.60
+      - 192.168.1.70
+
+  tasks:
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Deploy Nginx default configuration
+      ansible.builtin.template:
+        src: templates/nginx-default.j2
+        dest: /etc/nginx/sites-available/default
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reload Nginx
+
+    - name: Ensure Nginx is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+  handlers:
+    - name: Reload Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded

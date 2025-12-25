@@ -1,0 +1,7 @@
+ansiblenginx ansible_host=10.4.93.52
+[my_hosts]
+ansiblenginx
+[my_hosts:vars]
+ansible_connect=ssh
+ansible_user=ansibleadmin 
+ansible_private_key_file=~/.ssh/id_rsa
