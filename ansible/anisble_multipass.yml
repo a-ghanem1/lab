@@ -1,0 +1,7 @@
+users:
+  - default
+  - name: ansibleadmin
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - "YOUR_KEY"
