@@ -1,0 +1,42 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/common
+- name: Update all the packages to the latest
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: Install the common packages
+  ansible.builtin.apt:
+    pkg: "{{ common_packages }}"
+    state: present
+
+- name: Generate a local keypair
+  community.crypto.openssh_keypair:
+    path: "{{ item.key }}"
+  loop: "{{ users }}"
+  delegate_to: localhost
+  become: false
+
+- name: Ensure groups exist
+  ansible.builtin.group:
+    name: "{{ item.group }}"
+    state: present
+  loop: "{{ users }}"
+
+- name: Ensure users exist and are assigned to groups
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    group: "{{ item.group }}"
+    comment: "{{ item.name }}"
+    shell: /bin/bash
+    create_home: true
+    state: "{{ item.state }}"
+  loop: "{{ users }}"
+
+- name: Add keys to our users
+  ansible.posix.authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ lookup('file', item.key + '.pub') }}"
+  loop: "{{ users }}"

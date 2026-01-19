@@ -1,0 +1,10 @@
+app_dir: "/var/www/mern-app"
+npm_packages:
+  - express
+  - create-react-app
+  - pm2
+app_name: myapp
+react_app:
+  title: Custom React app
+  message: "This is a simple react app managed by anisble"
+deploy_custom_page: true
